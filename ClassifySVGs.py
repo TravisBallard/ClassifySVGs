@@ -10,12 +10,16 @@ elements = ['g', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polyg
 
 # add element classes to a single line svg. for example a <circle /> element would output <circle class="circle0" />
 def classifySingleLineSVG(elementName, line):
+	classRoot = elementName
+	if (elementName == 'g'):
+		classRoot = 'group'
+
 	parts = line.split('<' + elementName)
 	for index, part in enumerate(parts, start=0):
 		if index == 0 :
 			output = parts[index]
 		else :
-			output += '<' + elementName + ' class="'+elementName+str(index-1)+'"' + parts[index]
+			output += '<' + elementName + ' class="' + classRoot + str(index-1) + '"' + parts[index]
 	return output
 
 # get the number of lines in a file
@@ -44,6 +48,11 @@ for dirName, subDirList, fileList in os.walk(rootDir, topdown=False):
 					# would need to iterate instances of found items with splitting similar to classifySingleLineSVG
 					if (numLines > 1):
 						for element in elements:
+							
+							classRoot = element
+							if (element == 'g'):
+								classRoot = 'group'
+
 							count = 0
 							with open(filePath) as inFile:
 								for index, line in enumerate(inFile, start=0):
@@ -52,7 +61,7 @@ for dirName, subDirList, fileList in os.walk(rootDir, topdown=False):
 									
 									newline = lines[index]
 									if (newline.find('<' + element) != -1):
-										lines[index] = newline.replace('<' + element, '<' + element + ' class="'+ element + str(count) + '"')
+										lines[index] = newline.replace('<' + element, '<' + element + ' class="'+ classRoot + str(count) + '"')
 										count += 1
 
 					# single line svg files
